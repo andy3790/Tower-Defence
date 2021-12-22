@@ -13,4 +13,4 @@
 #include <gl/glm/ext.hpp>
 #include <gl/glm/gtc/matrix_transform.hpp>
 
-#pragma comment(lib, "Winmm.lib")
+//#pragma comment(lib, "Winmm.lib")

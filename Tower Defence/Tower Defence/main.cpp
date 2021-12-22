@@ -40,6 +40,23 @@ bool is_light_on; // 빛 활성화/비활성화
 bool is_texture_on; // 텍스쳐 활성화/비활성화
 
 
+unsigned int transformLocation_ui;
+unsigned int viewLocation_ui;
+unsigned int projectionLocation_ui;
+unsigned int colorLocation_ui;
+
+unsigned int lightPosLocation_ui;
+unsigned int lightColorLocation_ui;
+unsigned int lightOnLocation_ui;
+unsigned int viewPosLocation_ui;
+
+unsigned int textureOnLocation_ui;
+
+unsigned int alphaValueLocation_ui;
+
+
+Figure Figure_floor;
+
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
 	//--- 윈도우 생성하기
@@ -82,7 +99,21 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	is_texture_on = false;
 
+	transformLocation_ui = glGetUniformLocation(s_program, "model");
+	viewLocation_ui = glGetUniformLocation(s_program, "view");
+	projectionLocation_ui = glGetUniformLocation(s_program, "projection");
+	colorLocation_ui = glGetUniformLocation(s_program, "model_color");
 
+	lightPosLocation_ui = glGetUniformLocation(s_program, "lightPos");
+	lightColorLocation_ui = glGetUniformLocation(s_program, "lightColor");
+	lightOnLocation_ui = glGetUniformLocation(s_program, "lightOn");
+	viewPosLocation_ui = glGetUniformLocation(s_program, "viewPos");
+
+	textureOnLocation_ui = glGetUniformLocation(s_program, "textureOn");
+
+	alphaValueLocation_ui = glGetUniformLocation(s_program, "alphaValue");
+
+	Figure_floor.MakeCube(0.0, -0.1, 0.0, 10.0, 0.1, 10.0, 0.5, 0.5, 0.5);
 
 	glutTimerFunc(10, Timer, 1);
 
@@ -105,16 +136,7 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 
 	//--- 변환 행렬 값을 버텍스 세이더로 보내기
-	unsigned int transformLocation_ui = glGetUniformLocation(s_program, "model");
-	unsigned int viewLocation_ui = glGetUniformLocation(s_program, "view");
-	unsigned int projectionLocation_ui = glGetUniformLocation(s_program, "projection");
-	unsigned int colorLocation_ui = glGetUniformLocation(s_program, "model_color");
 	glUniform3f(colorLocation_ui, -1.0, -1.0, -1.0);
-
-	unsigned int lightPosLocation_ui = glGetUniformLocation(s_program, "lightPos");
-	unsigned int lightColorLocation_ui = glGetUniformLocation(s_program, "lightColor");
-	unsigned int lightOnLocation_ui = glGetUniformLocation(s_program, "lightOn");
-	unsigned int viewPosLocation_ui = glGetUniformLocation(s_program, "viewPos");
 
 	glm::vec4 current_light_pos_v4 = light_rot_m4 * light_trans_m4 * light_pos_v4;
 	glUniform3f(lightPosLocation_ui, current_light_pos_v4.x, current_light_pos_v4.y, current_light_pos_v4.z);
@@ -122,10 +144,8 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 	glUniform3f(lightColorLocation_ui, 1.0, 1.0, 1.0);
 	glUniform3f(viewPosLocation_ui, camera_pos_v3.x, camera_pos_v3.y, camera_pos_v3.z);
 
-	unsigned int textureOnLocation_ui = glGetUniformLocation(s_program, "textureOn");
 	glUniform1i(textureOnLocation_ui, is_texture_on);
 
-	unsigned int alphaValueLocation_ui = glGetUniformLocation(s_program, "alphaValue");
 	glUniform1f(alphaValueLocation_ui, 1.0f);
 
 	glm::mat4 viewMat_m4 = glm::mat4(1.0f);
@@ -139,7 +159,7 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(viewLocation_ui, 1, GL_FALSE, &viewMat_m4[0][0]);
 		glUniformMatrix4fv(projectionLocation_ui, 1, GL_FALSE, glm::value_ptr(projMat_m4));
 
-
+		Figure_floor.Draw(transformLocation_ui);
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
