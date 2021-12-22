@@ -28,9 +28,13 @@ void main(void)
 	vec3 result;
 
 	if (lightOn) {
+//		float dist = distance(lightPos, FragPos) + 0.1f;
+//		vec3 distColor = lightColor / dist;
+
 		vec3 lightDir = normalize(lightPos - FragPos);
 		float diffuseLight = max(dot(Normal, lightDir), 0.0);
 		vec3 diffuse = diffuseLight * lightColor;
+//		vec3 diffuse = diffuseLight * distColor;
 
 		int shininess = 128;
 		vec3 viewDir = normalize(viewPos - FragPos);
@@ -38,6 +42,7 @@ void main(void)
 		float specularLight = max(dot(viewDir, reflectDir), 0.0);
 		specularLight = pow(specularLight, shininess);
 		vec3 specular = specularLight * lightColor;
+//		vec3 specular = specularLight * distColor;
 	
 		result = (ambient + diffuse + specular) * vec3(out_Color);
 		if(textureOn){

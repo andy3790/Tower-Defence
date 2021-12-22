@@ -56,6 +56,10 @@ unsigned int alphaValueLocation_ui;
 
 
 Figure Figure_floor;
+Figure Figure_SelectCube;
+
+float floor_size[2]; // x,z
+int floor_count[2]; // x,z
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
@@ -83,7 +87,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	camera_startPos_v3 = glm::vec3(5.0f, 5.0f, 5.0f);
+	camera_startPos_v3 = glm::vec3(10.0f, 20.0f, 0.0f);
 	camera_startDir_v3 = glm::vec3(0.0f, 0.0f, 0.0f);
 	camera_pos_v3 = camera_startPos_v3; //--- 카메라 위치
 	camera_direction_v3 = camera_startDir_v3; //--- 카메라 바라보는 방향
@@ -113,7 +117,13 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	alphaValueLocation_ui = glGetUniformLocation(s_program, "alphaValue");
 
+	floor_size[0] = 10.0f;
+	floor_count[0] = 10;
+	floor_size[1] = 10.0f;
+	floor_count[1] = 10;
+
 	Figure_floor.MakeCube(0.0, -0.1, 0.0, 10.0, 0.1, 10.0, 0.5, 0.5, 0.5);
+	Figure_SelectCube.MakeCube(0.0, 0.0, 0.0, floor_size[0] / floor_count[0], 0.1, floor_size[1] / floor_count[1]);
 
 	glutTimerFunc(10, Timer, 1);
 
@@ -159,7 +169,11 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(viewLocation_ui, 1, GL_FALSE, &viewMat_m4[0][0]);
 		glUniformMatrix4fv(projectionLocation_ui, 1, GL_FALSE, glm::value_ptr(projMat_m4));
 
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		Figure_floor.Draw(transformLocation_ui);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		Figure_SelectCube.Draw(transformLocation_ui);
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
